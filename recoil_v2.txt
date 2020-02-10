@@ -1,0 +1,37 @@
+EnablePrimaryMouseButtonEvents(true)
+original_recoil = 3
+first_shot_reoil = 1.35
+enchanced_recoil = 6
+scope_in = 1
+function OnEvent(event, arg)
+
+	if IsKeyLockOn("numlock" )then
+		if IsMouseButtonPressed(3)then
+			if IsKeyLockOn("capslock" )then
+				scope_in = 2.3
+			else
+				scope_in = 1
+			end
+			repeat	
+				if IsMouseButtonPressed(1) then
+					first_shot = true
+					if first_shot then
+						recoil = ( original_recoil + first_shot_reoil ) * scope_in
+					else
+						recoil = original_recoil * scope_in
+					end
+					start_time = GetRunningTime()
+					repeat
+						MoveMouseRelative(0,recoil)
+						Sleep(20)
+						first_shot = false
+						if GetRunningTime() - start_time > 800 then
+               		  	   -- change recoil in long press
+              	  		   recoil = enchanced_recoil
+       			         end
+					until not IsMouseButtonPressed(1)
+				end				
+			until not IsMouseButtonPressed(3)
+		end		
+	end
+end
