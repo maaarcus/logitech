@@ -1,37 +1,52 @@
 EnablePrimaryMouseButtonEvents(true)
 original_recoil = 3
-first_shot_reoil = 1.35
-enchanced_recoil = 6
-scope_in = 1
+first_shot_recoil = 0
+enchanced_recoil = 4
+extra_reoil = 2
+
 function OnEvent(event, arg)
 
-	if IsKeyLockOn("numlock" )then
-		if IsMouseButtonPressed(3)then
-			if IsKeyLockOn("capslock" )then
-				scope_in = 2.3
-			else
-				scope_in = 1
-			end
-			repeat	
-				if IsMouseButtonPressed(1) then
-					first_shot = true
-					if first_shot then
-						recoil = ( original_recoil + first_shot_reoil ) * scope_in
-					else
-						recoil = original_recoil * scope_in
-					end
-					start_time = GetRunningTime()
-					repeat
-						MoveMouseRelative(0,recoil)
-						Sleep(20)
-						first_shot = false
-						if GetRunningTime() - start_time > 800 then
-               		  	   -- change recoil in long press
-              	  		   recoil = enchanced_recoil
-       			         end
-					until not IsMouseButtonPressed(1)
-				end				
-			until not IsMouseButtonPressed(3)
-		end		
-	end
+
+      if IsMouseButtonPressed(3)then
+          if IsKeyLockOn("capslock" )then
+              scope_in = 3
+          else
+              scope_in = 0
+          end
+          
+          if IsKeyLockOn("numlock" )then
+              scope_in = scope_in  + extra_reoil 
+          end
+          first_shot = true
+          repeat
+              if IsMouseButtonPressed(1) then
+                  recoil = original_recoil + scope_in 
+                  start_time = GetRunningTime()
+                  enhanced = false
+                  first_shot = true
+                  repeat
+                      -- OutputLogMessage(tostring(recoil))
+                      --  OutputLogMessage('\n')
+                      if first_shot  then
+                        MoveMouseRelative(0,recoil + first_shot_recoil )
+                        first_shot = false
+                      else
+                        MoveMouseRelative(0,recoil)
+                      end
+                      
+                      
+                      Sleep(20)
+
+                      
+                      
+                      first_shot = false
+                      if (GetRunningTime() - start_time > 800 and not enhanced) then
+                              -- change recoil in long press
+                             recoil = recoil + enchanced_recoil
+                             enhanced = true
+                      end
+                  until not IsMouseButtonPressed(1)
+              end
+          until not IsMouseButtonPressed(3)
+      end
 end
